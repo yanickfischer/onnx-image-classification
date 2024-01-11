@@ -92,6 +92,3 @@ def analyze():
         print(r, labels[str(r)], results[0][r])
 
     return resultStr
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
