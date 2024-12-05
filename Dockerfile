@@ -1,11 +1,12 @@
-# docker build -t mosazhaw/efficientnet-lite4-onnx .
-# docker run --name efficientnet-lite4-onnx -p 9000:5000 -d mosazhaw/efficientnet-lite4-onnx
+# docker build -t mosazhaw/onnx-image-classification .
+# docker run --name onnx-image-classification -p 9000:5000 -d mosazhaw/onnx-image-classification
 
 FROM python:3.13.0
 
 # Copy Files
 WORKDIR /usr/src/app
-COPY . .
+COPY app.py *.onnx labels_map.txt requirements.txt ./
+COPY web web
 
 # Install
 RUN apt-get update && apt-get install -y libgl1
