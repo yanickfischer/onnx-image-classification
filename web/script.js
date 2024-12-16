@@ -32,17 +32,18 @@ function checkFiles(files) {
         },
         body: formData
     }).then(
-        response => {
-            console.log(response)
-            response.text().then(function (text) {
-                answer.innerHTML = text;
-            });
-
-        }
+        response => response.json()
     ).then(
-        success => console.log(success)
+        data => {
+            console.log(data);
+            let table = "<table><tr><th>Class</th><th>Value</th></tr>";
+            data.forEach(item => {
+                table += `<tr><td>${item.class}</td><td>${item.value}</td></tr>`;
+            });
+            table += "</table>";
+            answer.innerHTML = table;
+        }
     ).catch(
         error => console.log(error)
     );
-
 }

@@ -1,13 +1,10 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask.helpers import send_file
 import numpy as np
 import onnxruntime
 
-import math
-import matplotlib.pyplot as plt
 import cv2
 import json
-import base64
 
 app = Flask(__name__,
             static_url_path='/', 
@@ -79,16 +76,9 @@ def analyze():
     # run inference
     results = ort_session.run(["Softmax:0"], {"images:0": img_batch})[0]
     result = reversed(results[0].argsort()[-5:])
-    resultStr = ""
-    first = True
-    for r in result:
-        if first: 
-            resultStr = labels[str(r)] + " (" + str(results[0][r]) + ")"
-            first = False
-        else:     
-            # TODO use proper JSON as result       
-            resultStr =  resultStr + "<br>" + labels[str(r)] + " (" + str(results[0][r]) + ")"
-        
-        print(r, labels[str(r)], results[0][r])
 
-    return resultStr
+    for r in result:
+        result_list = [{"class": labels[str(r)], "value": float(results[0][r])} for r in result]
+
+    # Return the result as JSON
+    return jsonify(result_list)    
