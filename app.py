@@ -10,8 +10,6 @@ app = Flask(__name__,
             static_url_path='/', 
             static_folder='web')
 
-ort_session = onnxruntime.InferenceSession("resnet50-v2-7.onnx")
-
 # load the labels text file
 labels = json.load(open("labels_map.txt", "r"))
 
@@ -59,10 +57,10 @@ def indexPage():
 def analyze():
 
     # read the image
-    content = request.files.get('0', '').read()
+    content = request.files["image"].read()
 
     # build numpy array from uploaded data
-    img = cv2.imdecode(np.fromstring(content, np.uint8), cv2.IMREAD_UNCHANGED)
+    img = cv2.imdecode(np.frombuffer(content, np.uint8), cv2.IMREAD_UNCHANGED)
 
     # pre-process, see https://github.com/onnx/models/tree/master/vision/classification/resnet
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -73,8 +71,16 @@ def analyze():
     # create a batch of 1 (that batch size is buned into the saved_model)
     img_batch = np.expand_dims(img, axis=0)
 
-    # run inference
-    results = ort_session.run(["resnetv24_dense0_fwd"], {"data": img_batch})[0]
+    model_key = request.form.get("model", "default")
+    model_paths = {
+        "default": "efficientnet-lite4-11.onnx",
+        "int8": "efficientnet-lite4-11-int8.onnx",
+        "qdq": "efficientnet-lite4-11-qdq.onnx"
+    }
+    model_path = model_paths.get(model_key, model_paths["default"])
+    print(f"⚙️  Modellpfad gewählt: {model_path}")
+    ort_session = onnxruntime.InferenceSession(model_path)
+    results = ort_session.run(["Softmax:0"], {"images:0": img_batch})[0]
     result = reversed(results[0].argsort()[-5:])
 
     result_list = [{"class": labels[str(r)], "value": float(results[0][r])} for r in result]

@@ -14,33 +14,51 @@
     <div class="container-fluid">
         <h1><b>onnx-image-classification</b></h1>
         <b>ML EfficientNet-Lite4</b>
-        <p>ONNX Model Demonstration by mosa (Version 2.2)</p>
+        <p>ONNX EfficientNetLite Modell-Comparisson by Yanick Fischer</p>
 
-        <form>
+        <form id="analyzeForm" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="exampleFormControlFile1">Please upload image (jpeg, png)</label>
                 <input type="file" accept="image/png, image/jpeg" class="form-control-file" id="image" name="image"
                     onchange="checkFiles(this.files);">
             </div>
+            <div class="form-group mt-3">
+                <label for="model">Select Model:</label>
+                <select name="model" id="model" class="form-control">
+                    <option value="default">EfficientNet-Lite4</option>
+                    <option value="int8">EfficientNet-Lite4 INT8</option>
+                    <option value="qdq">EfficientNet-Lite4 QDQ</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary mt-3" onclick="submitForm()">Analyze</button>
         </form>
 
         <div id="answerPart" style="visibility: hidden;">
-            <br><p><b>Answer:</b>
+            <br>
+            <p><b>Answer:</b></p>
             <div id="answer"></div>
-            </p>
 
-            <p id="previewPart"><b>Analyzed Image:</b>
-            <p><img id="preview" width="300" src="#" alt="preview" /></p>
-            </p>
+            <div id="previewPart">
+                <p><b>Analyzed Image:</b></p>
+                <img id="preview" width="300" src="#" alt="preview" />
+            </div>
         </div>
 
         <div>
             <p>Links:<br>
-                <a href="https://github.com/onnx/models/tree/main/validated/vision/classification/efficientnet-lite4">EfficientNet-Lite4
+                <a
+                    href="https://github.com/onnx/models/blob/main/validated/vision/classification/efficientnet-lite4/model/efficientnet-lite4-11.onnx">EfficientNet-Lite4
                     Repository</a><br>
+                <a
+                    href="https://github.com/onnx/models/blob/main/validated/vision/classification/efficientnet-lite4/model/efficientnet-lite4-11-int8.onnx">EfficientNet-Lite4-INT8
+                    Repository</a><br>
+                <a
+                    href="https://github.com/onnx/models/blob/main/validated/vision/classification/efficientnet-lite4/model/efficientnet-lite4-11-qdq.onnx">EfficientNet-Lite4-qdq
+                    Repository</a><br>
+                
                 <a href="https://onnx.ai/">ONNX Website</a>
             </p>
-        </diV>
+        </div>
     </div>
 
 
