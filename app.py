@@ -10,7 +10,7 @@ app = Flask(__name__,
             static_url_path='/', 
             static_folder='web')
 
-ort_session = onnxruntime.InferenceSession("efficientnet-lite4-11.onnx")
+ort_session = onnxruntime.InferenceSession("resnet50-v2-7.onnx")
 
 # load the labels text file
 labels = json.load(open("labels_map.txt", "r"))
@@ -64,7 +64,7 @@ def analyze():
     # build numpy array from uploaded data
     img = cv2.imdecode(np.fromstring(content, np.uint8), cv2.IMREAD_UNCHANGED)
 
-    # pre-process, see https://github.com/onnx/models/tree/master/vision/classification/efficientnet-lite4
+    # pre-process, see https://github.com/onnx/models/tree/master/vision/classification/resnet
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     # pre-process the image like mobilenet and resize it to 224x224
@@ -74,11 +74,10 @@ def analyze():
     img_batch = np.expand_dims(img, axis=0)
 
     # run inference
-    results = ort_session.run(["Softmax:0"], {"images:0": img_batch})[0]
+    results = ort_session.run(["resnetv24_dense0_fwd"], {"data": img_batch})[0]
     result = reversed(results[0].argsort()[-5:])
 
-    for r in result:
-        result_list = [{"class": labels[str(r)], "value": float(results[0][r])} for r in result]
+    result_list = [{"class": labels[str(r)], "value": float(results[0][r])} for r in result]
 
     # Return the result as JSON
     return jsonify(result_list)    
